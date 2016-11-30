@@ -183,14 +183,20 @@ rand8:
 # I leave it up to the user whether that's an issue. For one of many strategies to remove it,
 # see http://funloop.org/post/2013-07-12-generating-random-numbers-without-modulo-bias.html
 randInt:
-	addi $sp $sp -8
+	addi $sp $sp -12
 	sw $ra 0($sp)
 	sw $s0 4($sp)
+	sw $s1 8($sp)
+
+	or $s0 $a0 $0
+	or $s1 $a1 $0
 
 	jal rand32
 
+	# f(x) = min + (x % (max - min))
+
 	add $a0 $v0 $0
-	sub $a1 $a1 $s0
+	sub $a1 $s1 $s0
 
 	jal mod
 
@@ -198,7 +204,8 @@ randInt:
 
 	lw $ra 0($sp)
 	lw $s0 4($sp)
-	addi $sp $sp 8
+	lw $s1 8($sp)
+	addi $sp $sp 12
 
 	jr $ra
 
